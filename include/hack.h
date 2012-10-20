@@ -56,7 +56,6 @@
 #define MG_STAIRS       0x20
 #define MG_OBJPILE      0x40
 
-
 /* sellobj_state() states */
 #define SELL_NORMAL	(0)
 #define SELL_DELIBERATE	(1)

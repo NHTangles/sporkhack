@@ -2345,6 +2345,12 @@ tty_print_glyph(window, x, y, glyph)
 	reverse_on = TRUE;
     }
 
+#ifdef TEXTCOLOR
+    if (!reverse_on && (special & MG_STAIRS)) {
+	term_start_red_bg();
+    }
+#endif
+
 #if defined(USE_TILES) && defined(MSDOS)
     if (iflags.grmode && iflags.tile_view)
       xputg(glyph,ch,special);
@@ -2362,6 +2368,10 @@ tty_print_glyph(window, x, y, glyph)
 	}
 #endif
     }
+
+#ifdef TEXTCOLOR
+    if (!reverse_on && (special & MG_STAIRS)) term_end_color();
+#endif
 
     wins[window]->curx++;	/* one character over */
     ttyDisplay->curx++;		/* the real cursor moved too */
