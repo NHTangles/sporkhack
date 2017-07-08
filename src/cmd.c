@@ -1943,7 +1943,7 @@ int final;
 		    u.uconduct.elbereths, plur(u.uconduct.elbereths));
 	    dump("  You ", buf);
 	}
-	
+
 	dump("", "");
 }
 #endif /* DUMP_LOG */

@@ -256,7 +256,7 @@ sengr_at(s, x, y)
 #endif /* ELBERETH */
 
 #ifdef ELBERETH_CONDUCT
-/** Return the number of distinct times Elbereth is engraved at
+/* Return the number of distinct times Elbereth is engraved at
  * the specified location. Case insensitive.  Counts an engraving
  * as being present even if it's still being written: if you're
  * killed while trying to write Elbereth, it still violates the
