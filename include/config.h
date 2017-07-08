@@ -155,7 +155,7 @@
 #define NEWS "news"		/* the file containing the latest hack news */
 #define PANICLOG "paniclog"	/* log of panic and impossible events */
 #define DUMP_LOG				 /* turn on dumping */
-#define DUMP_FN "/dgldir/userdata/%n/sporkhack/dumplog/%t.txt"
+#define DUMP_FN "/dgldir/userdata/%N/%n/sporkhack/dumplog/%t.sp.txt"
 
 #define SERVER_ADMIN_MSG "admin_msg"
 
@@ -177,7 +177,7 @@
 /* #define COMPRESS "/usr/bin/compress"	 Lempel-Ziv compression */
 /* #define COMPRESS_EXTENSION ".Z"	 compress's extension */
 /* An example of one alternative you might want to use: */
-#define COMPRESS "/usr/bin/gzip" /* FSF gzip compression */
+#define COMPRESS "/bin/gzip" /* FSF gzip compression */
 #define COMPRESS_EXTENSION ".gz" 	/* normal gzip extension */
 #endif
 
@@ -190,7 +190,7 @@
  *	a tar-like file, thus making a neater installation.  See *conf.h
  *	for detailed configuration.
  */
-//#define DLB /* not supported on all platforms */
+#define DLB /* not supported on all platforms */
 
 /*
  *	Defining INSURANCE slows down level changes, but allows games that
@@ -209,7 +209,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/usr/games/lib/nethackdir"
+#  define HACKDIR "/sporkhack/var"
 # endif
 
 /*
@@ -219,7 +219,7 @@
  * since the user might create files in a directory of his choice.
  * Of course SECURE is meaningful only if HACKDIR is defined.
  */
-#define SECURE 	/* do setuid(getuid()) after chdir() */
+/* #define SECURE */ 	/* do setuid(getuid()) after chdir() */
 
 /*
  * If it is desirable to limit the number of people that can play Hack
@@ -377,6 +377,7 @@ typedef unsigned char	uchar;
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # define MENU_COLOR
 # define MENU_COLOR_REGEX
+# define MENU_COLOR_REGEX_POSIX
 /* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
  * GNU specific functions by default, POSIX functions with
  * MENU_COLOR_REGEX_POSIX).
@@ -391,8 +392,22 @@ typedef unsigned char	uchar;
 #define STATUS_COLORS
 #define GOLDOBJ /* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
-#define WHEREIS_FILE /* Write out player's current location to player.whereis */
+#define WHEREIS_FILE "%n.whereis" /* Write out player's current location to player.whereis */
 #define WISH_TRACKER /* Write all wishes to a tracking file */
+
+/* Filename for dgamelaunch extra info field.
+   Can be left undefined for not writing extrainfo. */
+#define EXTRAINFO_FN "/dgldir/extrainfo-sp/%n.extrainfo"
+
+/* #define SIMPLE_MAIL */ /* dgamelaunch simple mail */
+
+#define LIVELOG         /* live logging of player actions */
+#define LIVELOGFILE "livelog"   /* file to output to */
+
+/* no earlygame livelog spam for broken  conducts */
+#define LL_CONDUCT_THRESHOLD 3000 /* min turncount */
+
+#define AUTO_OPEN	/* open doors by walking into them - Stefano Busti */
 
 /* End of Section 5 */
 
