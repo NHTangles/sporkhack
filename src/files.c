@@ -666,7 +666,7 @@ touch_whereis()
 #ifdef WIN32
 	Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
 #else
-	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
+	Sprintf(whereis_file,"%s.whereis",plname);
 #endif
 	Sprintf(whereis_work,"%d,%d,%d,%d,%d,0,0,%s,%s,%s,%d,%d\n",
 			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves,
@@ -692,7 +692,7 @@ delete_whereis()
 #if defined (WIN32)
 	Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
 #else
-	Sprintf(whereis_file,"%d-%s.whereis",(int)getuid(),plname);
+	Sprintf(whereis_file,"%s.whereis",plname);
 #endif
 	Sprintf(whereis_work,"%d,%d,%d,%d,%d,%d,1,%s,%s,%s,%d,%d\n",
 			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves, 

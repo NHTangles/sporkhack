@@ -1878,17 +1878,17 @@ tty_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     cw->nitems++;
     if (identifier->a_void) {
 	int len = strlen(str);
-	if (len >= BUFSZ) {
-	    /* We *think* everything's coming in off at most BUFSZ bufs... */
-	    impossible("Menu item too long (%d).", len);
-	    len = BUFSZ - 1;
-	}
-	Sprintf(buf, "%c - ", ch ? ch : '?');
-	(void) strncpy(buf+4, str, len);
-	buf[4+len] = '\0';
-	newstr = buf;
-    } else
-	newstr = str;
+ 	if (len >= BUFSZ) {
+ 	    /* We *think* everything's coming in off at most BUFSZ bufs... */
+ 	    impossible("Menu item too long (%d).", len);
+ 	    len = BUFSZ - 1;
+ 	}
+ 	Sprintf(buf, "%c - ", ch ? ch : '?');
+ 	(void) strncpy(buf+4, str, len);
+ 	buf[4+len] = '\0';
+ 	newstr = buf;
+     } else
+ 	newstr = str;
 
     item = (tty_menu_item *) alloc(sizeof(tty_menu_item));
     item->identifier = *identifier;

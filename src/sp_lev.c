@@ -471,18 +471,23 @@ flip_level(int flp)
     struct engr *etmp;
     struct mkroom *sroom;
 
-    /* stairs and ladders */
+    /*
+     * stairs and ladders
+     *
+     * DO NOT flip stairs or ladders in the sentinel position (x = 0),
+     * otherwise players will spawn in level corners surrounded by rock.
+     */
     if (flp & 1) {
-	yupstair = y2 - yupstair;
-	ydnstair = y2 - ydnstair;
-	yupladder = y2 - yupladder;
-	ydnladder = y2 - ydnladder;
+	if (xupstair) yupstair = y2 - yupstair;
+	if (xupstair) ydnstair = y2 - ydnstair;
+	if (xupladder) yupladder = y2 - yupladder;
+	if (xupladder) ydnladder = y2 - ydnladder;
     }
     if (flp & 2) {
-	xupstair = x2 - xupstair;
-	xdnstair = x2 - xdnstair;
-	xupladder = x2 - xupladder;
-	xdnladder = x2 - xdnladder;
+	if (xupstair) xupstair = x2 - xupstair;
+	if (xupstair) xdnstair = x2 - xdnstair;
+	if (xupladder) xupladder = x2 - xupladder;
+	if (xupladder) xdnladder = x2 - xdnladder;
     }
 
     /* traps */

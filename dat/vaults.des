@@ -24,7 +24,6 @@
 #    is a check whether there's actual free space behind the door, outside the room)
 #  - SUBROOM does not work. (causes a crash occasionally. try with fake delphi)
 #  - cannot do split rooms.  (can do, with MAP-ENDMAP & REGIONs)
-#  - Player is occasionally put into a corner of the map. Why?
 #
 # TODO:
 #  - FLAGS: unique

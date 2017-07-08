@@ -2164,6 +2164,9 @@
             Automatically dig if you are wielding a digging tool and moving
             into a place that can be dug (default false).
 
+	  autoopen
+	    Walking into a door attempts to open it (default true).
+
           autopickup
             Automatically pick up things onto which you move (default  on).
             See pickup_types to refine the behavior.
