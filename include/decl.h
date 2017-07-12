@@ -210,6 +210,8 @@ E char lock[];
 E const char sdir[], ndir[];
 E const schar xdir[], ydir[], zdir[];
 
+#define DOESCAPE '\033'
+
 E NEARDATA schar tbx, tby;		/* set in mthrowu.c */
 
 E NEARDATA struct multishot { int n, i; short o; boolean s; } m_shot;
@@ -449,6 +451,8 @@ E struct _plinemsg *pline_msg;
 #define MSGTYP_NOREP	1
 #define MSGTYP_NOSHOW	2
 #define MSGTYP_STOP	3
+
+E boolean curses_stupid_hack;
 
 #undef E
 

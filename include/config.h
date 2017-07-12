@@ -43,6 +43,7 @@
  * Some combinations make no sense.  See the installation document.
  */
 #define TTY_GRAPHICS	/* good old tty based graphics */
+#define CURSES_GRAPHICS     /* Proper curses interface */
 /* #define X11_GRAPHICS */	/* X11 interface */
 /* #define QT_GRAPHICS */	/* Qt interface */
 /* #define GNOME_GRAPHICS */	/* Gnome interface */
@@ -280,6 +281,9 @@ typedef signed char	schar;
 #ifndef _AIX32		/* identical typedef in system file causes trouble */
 typedef unsigned char	uchar;
 #endif
+
+/* TODO: include inttypes.h or stdint.h and use uint32_t instead of long? */
+typedef long glyph_t;
 
 /*
  * Various structures have the option of using bitfields to save space.

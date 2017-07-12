@@ -156,6 +156,10 @@ struct flag {
 
 struct instance_flags {
 	boolean  cbreak;	/* in cbreak mode, rogue format */
+#ifdef CURSES_GRAPHICS
+        boolean  classic_status;        /* What kind of horizontal statusbar to use */
+        boolean  cursesgraphics;        /* Use portable curses extended characters */
+#endif
 	boolean  DECgraphics;	/* use DEC VT-xxx extended character set */
 	boolean  echo;		/* 1 to echo characters */
 	boolean  IBMgraphics;	/* use IBM extended character set */
@@ -181,6 +185,8 @@ struct instance_flags {
 #endif
 #ifdef TTY_GRAPHICS
 	char prevmsg_window;	/* type of old message window to use */
+#endif
+#if defined(TTY_GRAPHICS) || defined(CURSES_GRAPHICS)
 	boolean  extmenu;	/* extended commands use menu interface */
 #endif
 #ifdef MENU_COLOR
@@ -189,6 +195,7 @@ struct instance_flags {
 #if defined(STATUS_COLORS) && defined(TEXTCOLOR)
 	boolean use_status_colors; /* use color in status line; only if wc_color */
 #endif
+    boolean hitpointbar;
 #ifdef MFLOPPY
 	boolean  checkspace;	/* check disk space before writing files */
 				/* (in iflags to allow restore after moving
@@ -225,6 +232,9 @@ struct instance_flags {
 #ifdef SORTLOOT
 	char sortloot;          /* sort items to loot alphabetically */
 #endif
+    boolean use_menu_glyphs;
+    boolean hilite_hidden_stairs;
+    boolean hilite_obj_piles;
 /*
  * Window capability support.
  */
@@ -272,6 +282,11 @@ struct instance_flags {
 	boolean wc2_fullscreen;		/* run fullscreen */
 	boolean wc2_softkeyboard;	/* use software keyboard */
 	boolean wc2_wraptext;		/* wrap text */
+    int     wc2_term_cols;      /* terminal width, in characters */
+    int     wc2_term_rows;      /* terminal height, in characters */
+    int     wc2_windowborders;  /* display borders on NetHack windows */
+    int     wc2_petattr;        /* points to text attributes for pet */
+    boolean wc2_guicolor;       /* allow colors in GUI (outside map) */
 	boolean wc2_darkgray;		/* try to use PC dark-gray color
 					 * to represent black object */
 
