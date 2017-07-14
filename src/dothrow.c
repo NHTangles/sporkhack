@@ -936,6 +936,8 @@ boolean twoweap; /* used to restore twoweapon mode if wielded weapon returns */
 	register int range, urange;
 	boolean impaired = (Confusion || Stunned || Blind ||
 			   Hallucination || Fumbling);
+	
+	obj->was_thrown = 1;
 
 	if ((obj->cursed || obj->greased) && (u.dx || u.dy) && !rn2(7)) {
 	    boolean slipok = TRUE;

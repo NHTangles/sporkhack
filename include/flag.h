@@ -235,6 +235,7 @@ struct instance_flags {
     boolean use_menu_glyphs;
     boolean hilite_hidden_stairs;
     boolean hilite_obj_piles;
+    boolean pickup_thrown;
 /*
  * Window capability support.
  */
