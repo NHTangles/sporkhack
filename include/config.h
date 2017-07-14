@@ -156,9 +156,9 @@
 #define NEWS "news"		/* the file containing the latest hack news */
 #define PANICLOG "paniclog"	/* log of panic and impossible events */
 #define DUMP_LOG				 /* turn on dumping */
-#define DUMP_FN "/dgldir/userdata/%N/%n/sporkhack/dumplog/%t.sp.txt"
+#define DUMP_FN "/tmp/sporkhack.%n.%t.txt"
 
-#define SERVER_ADMIN_MSG "admin_msg"
+/*#define SERVER_ADMIN_MSG "admin_msg"*/
 
 /*
  *	If COMPRESS is defined, it should contain the full path name of your
@@ -210,7 +210,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/sporkhack/var"
+#  define HACKDIR "/opt/sporkhack/var"
 # endif
 
 /*
@@ -396,16 +396,16 @@ typedef long glyph_t;
 #define STATUS_COLORS
 #define GOLDOBJ /* Gold is kept on obj chains - Helge Hafting */
 #define AUTOPICKUP_EXCEPTIONS /* exceptions to autopickup */
-#define WHEREIS_FILE "%n.whereis" /* Write out player's current location to player.whereis */
+/*#define WHEREIS_FILE "%n.whereis" */ /* Write out player's current location to player.whereis */
 #define WISH_TRACKER /* Write all wishes to a tracking file */
 
 /* Filename for dgamelaunch extra info field.
    Can be left undefined for not writing extrainfo. */
-#define EXTRAINFO_FN "/dgldir/extrainfo-sp/%n.extrainfo"
+/* #define EXTRAINFO_FN "/dgldir/extrainfo-sp/%n.extrainfo" */
 
 /* #define SIMPLE_MAIL */ /* dgamelaunch simple mail */
 
-#define LIVELOG         /* live logging of player actions */
+/* #define LIVELOG  */       /* live logging of player actions */
 #define LIVELOGFILE "livelog"   /* file to output to */
 
 /* no earlygame livelog spam for broken  conducts */
