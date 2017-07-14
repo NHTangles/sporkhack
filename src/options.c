@@ -159,6 +159,7 @@ static struct Bool_Opt
 #else
 	{"statuscolors", (boolean *)0, TRUE, SET_IN_GAME},
 #endif
+	{"menu_glyphs", &iflags.use_menu_glyphs, TRUE, SET_IN_GAME},
 #ifdef WIZARD
 	/* for menu debugging only*/
 	{"menu_tab_sep", &iflags.menu_tab_sep, FALSE, SET_IN_GAME},
