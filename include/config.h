@@ -409,6 +409,8 @@ typedef unsigned char	uchar;
 
 #define AUTO_OPEN	/* open doors by walking into them - Stefano Busti */
 
+#define ELBERETH_CONDUCT /* Track the number of times the player engraves Elbereth. - Ray Kulhanek */
+
 /* End of Section 5 */
 
 #include "global.h"	/* Define everything else according to choices above */
