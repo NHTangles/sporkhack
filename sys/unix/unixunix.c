@@ -175,6 +175,8 @@ getlock()
 			if (iflags.window_inited) {
 			    pline("%s", msg);
 			} else {
+			const char *msg = "Recovery of save file unsuccessful. "
+			    "Press any key to continue ...\n";
 			    printf("\n\n%s", msg);
 			    fflush(stdout);
 			    c = getchar();
