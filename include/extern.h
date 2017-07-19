@@ -139,6 +139,10 @@ E void FDECL(bot1str, (char *));
 E void FDECL(bot2str, (char *));
 #endif
 
+/* ### charinit.c ### */
+
+E int FDECL(player_selection_menu,(winid,void (*)(int,int)));
+
 /* ### cmd.c ### */
 
 #ifdef USE_TRAMPOLI

@@ -326,7 +326,7 @@ HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c ball.c bones.c \
 	   dungeon.c eat.c end.c engrave.c exper.c explode.c extralev.c \
 	   files.c fountain.c hack.c hacklib.c invent.c light.c lock.c \
 	   mail.c makemon.c mapglyph.c mcastu.c mhitm.c mhitu.c minion.c \
-	   mklev.c mkmap.c \
+	   mklev.c mkmap.c charinit.c \
 	   mkmaze.c mkobj.c mkroom.c mon.c mondata.c monmove.c monst.c \
 	   mplayer.c mthrowu.c muse.c music.c o_init.c objects.c objnam.c \
 	   options.c pager.c pickup.c pline.c polyself.c potion.c pray.c \
@@ -383,7 +383,7 @@ HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o ball.o \
 	drawing.o dungeon.o eat.o end.o engrave.o exper.o explode.o \
 	extralev.o files.o fountain.o hack.o hacklib.o invent.o light.o \
 	lock.o mail.o makemon.o mapglyph.o mcastu.o mhitm.o mhitu.o \
-	minion.o mklev.o mkmap.o \
+	minion.o mklev.o mkmap.o charinit.o \
 	mkmaze.o mkobj.o mkroom.o mon.o mondata.o monmove.o monstr.o \
 	mplayer.o mthrowu.o muse.o music.o o_init.o objnam.o options.o \
 	pager.o pickup.o pline.o polyself.o potion.o pray.o priest.o \

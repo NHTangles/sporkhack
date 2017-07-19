@@ -322,159 +322,25 @@ char** argv;
     tty_display_nhwindow(BASE_WINDOW, FALSE);
 }
 
-struct player_selection_menu_option {
-	int x, y;
-	char accel;
-	char* item;
-	int* savein;
-	int (*convfunction)();
-	boolean (*validator)();
-} player_selection_menu_options[] = {
-	{ 2, 4, 'a', "Archeologist", &flags.initrole, str2role, ok_role },
-        { 2, 5, 'b', "Barbarian",    &flags.initrole, str2role, ok_role },
-        { 2, 6, 'c', "Caveman",      &flags.initrole, str2role, ok_role },
-        { 2, 7, 'h', "Healer",       &flags.initrole, str2role, ok_role },
-        { 2, 8, 'k', "Knight",       &flags.initrole, str2role, ok_role },
-        { 2, 9, 'm', "Monk",         &flags.initrole, str2role, ok_role },
-        { 2,10, 'p', "Priest",       &flags.initrole, str2role, ok_role },
-        { 2,11, 'R', "Ranger",       &flags.initrole, str2role, ok_role },
-        { 2,12, 'r', "Rogue",        &flags.initrole, str2role, ok_role },
-        { 2,13, 's', "Samurai",      &flags.initrole, str2role, ok_role },
-        { 2,14, 't', "Tourist",      &flags.initrole, str2role, ok_role },
-        { 2,15, 'v', "Valkyrie",     &flags.initrole, str2role, ok_role },
-        { 2,16, 'w', "Wizard",       &flags.initrole, str2role, ok_role },
 
-        {21, 4, 'H', "Human",        &flags.initrace, str2race, ok_race },
-        {21, 5, 'D', "Dwarf",        &flags.initrace, str2race, ok_race },
-        {21, 6, 'E', "Elf",          &flags.initrace, str2race, ok_race },
-        {21, 7, 'G', "Gnome",        &flags.initrace, str2race, ok_race },
-        {21, 8, 'O', "Orc",          &flags.initrace, str2race, ok_race },
-
-        {21,11, 'M', "Male",         &flags.initgend, str2gend, ok_gend },
-        {21,12, 'F', "Female",       &flags.initgend, str2gend, ok_gend },
-
-        {21,15, 'L', "Lawful",       &flags.initalign,str2align,ok_align},
-        {21,16, 'N', "Neutral",      &flags.initalign,str2align,ok_align},
-        {21,17, 'C', "Chaotic",      &flags.initalign,str2align,ok_align},
-
-        { 2,19, 'q', "quit",         0,               0,        0},
-        {13,19, '*', "reroll",       0,               0,        0},
-        {26,19, '.', "play!",        0,               0,        0},
-        {0,0,0,0,0,0} /* fencepost */
-};
-
-
+/* the windowport interface has no provision for setting colours.
+ * so we need to pass a function pointer to the character selection
+ * dialog
+ */
+void
+tty_toggle_color(int c, int oo)
+{
+    if (oo == ON)
+        term_start_color(c);
+    else
+        term_end_color();
+}
+   
 void
 tty_player_selection()
 {
-	char obuf[QBUFSZ];
-	int ch;
-        boolean xallowed = TRUE;
-
-	/* prevent an unnecessary prompt */
-	rigid_role_checks();
-
-        /* Grab ourselves a random character that's as consistent with
-           the RC as possible */
-        if (flags.initrole < 0)
-          flags.initrole = pick_role(flags.initrace, flags.initgend,
-                                     flags.initalign, PICK_RANDOM);
-        if (flags.initrole < 0)
-          flags.initrole = randrole();
-
-	if (flags.initrace < 0 || !validrace(flags.initrole, flags.initrace))
-          flags.initrace = pick_race(flags.initrole, flags.initgend,
-                                     flags.initalign, PICK_RANDOM);
-        if (flags.initrace < 0)
-          flags.initrace = randrace(flags.initrole);
-
-	if (flags.initgend < 0 || !validgend(flags.initrole, flags.initrace,
-						flags.initgend))
-          flags.initgend = pick_gend(flags.initrole, flags.initrace,
-                                     flags.initalign, PICK_RANDOM);
-        if (flags.initgend < 0)
-          flags.initgend = randgend(flags.initrole, flags.initrace);
-
-	if (flags.initalign < 0 || !validalign(flags.initrole, flags.initrace,
-							flags.initalign))
-          flags.initalign = pick_align(flags.initrole, flags.initrace,
-                                       flags.initgend, PICK_RANDOM);
-        if (flags.initalign < 0)
-          flags.initalign = randalign(flags.initrole, flags.initrace);
-
-        /* Fixed parts of the window */
-        tty_clear_nhwindow(BASE_WINDOW);
-
-	Sprintf(obuf, "%s %s, welcome to SporkHack!", Hello((struct monst *)0), plname);
-        curs(BASE_WINDOW, 1, 0);
-        tty_putstr(BASE_WINDOW, 0, obuf);
-
-        curs(BASE_WINDOW, 6, 2);
-	term_start_color(CLR_WHITE); tty_putstr(BASE_WINDOW, 0, "Create your character:"); term_end_color();
-        curs(BASE_WINDOW, 6, 4);
-        tty_putstr(BASE_WINDOW, ATR_INVERSE, "Class");
-        curs(BASE_WINDOW, 25, 4);
-        tty_putstr(BASE_WINDOW, ATR_INVERSE, "Race");
-        curs(BASE_WINDOW, 25, 11);
-        tty_putstr(BASE_WINDOW, ATR_INVERSE, "Gender");
-        curs(BASE_WINDOW, 25, 15);
-        tty_putstr(BASE_WINDOW, ATR_INVERSE, "Alignment");
-
-        /* Changing parts of the window */
-        do {
-            struct player_selection_menu_option* p = player_selection_menu_options;
-            int savestat, i;
-            while (p->x) {
-                int color = CLR_GRAY;
-                curs(BASE_WINDOW, p->x, (p->y+1));
-                Sprintf(obuf, "%c %c %s", p->accel,
-                        p->savein && p->convfunction(p->item) == *(p->savein) ? '+' : '-',
-                        p->item);
-                /* We colour a crga in brown if it couldn't be changed to without
-                   having to change some other aspect of the character */
-                if (p->savein) {
-                    savestat = *(p->savein);
-                    *(p->savein) = p->convfunction(p->item);
-                    if (!p->validator(flags.initrole,flags.initrace,
-                                      flags.initgend,flags.initalign)) {
-                        color = CLR_BROWN;
-                        if (obuf[2] == '+') obuf[2] = '!';
-                    }
-                    *(p->savein) = savestat;
-                }
-                if (obuf[2] != '-' || p->accel == '.') color += BRIGHT;
-                term_start_color(color); tty_putstr(BASE_WINDOW, 0, obuf); term_end_color();
-                p++;
-            }
-            if (ok_role (flags.initrole,flags.initrace,flags.initgend,flags.initalign) &&
-                ok_race (flags.initrole,flags.initrace,flags.initgend,flags.initalign) &&
-                ok_gend (flags.initrole,flags.initrace,flags.initgend,flags.initalign) &&
-                ok_align(flags.initrole,flags.initrace,flags.initgend,flags.initalign)) {
-                xallowed = TRUE;
-            } else { xallowed = FALSE; }
-
-            curs(BASE_WINDOW, 26, 20); /* the . of . - play! */
-
-            ch = readchar();
-            if (ch == 'q' || ch == 'Q') bail((char *)0);
-            if (ch == '*') {
-                flags.initrole = randrole();
-                flags.initrace = randrace(flags.initrole);
-                flags.initgend = randgend(flags.initrole, flags.initrace);
-                flags.initalign = randalign(flags.initrole, flags.initrace);
-            }
-            p = player_selection_menu_options;
-            while (p->x) {
-                if (p->accel == ch && p->savein) {
-                    *(p->savein) = p->convfunction(p->item);
-                    break;
-                }
-                p++;
-            }
-        } while (ch != '.' || !xallowed);
-
-	/* Success! */
-	tty_display_nhwindow(BASE_WINDOW, FALSE);
+    if (player_selection_menu(BASE_WINDOW,tty_toggle_color) < 0)
+        bail((char *)0);
 }
 
 
