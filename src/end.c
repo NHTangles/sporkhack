@@ -166,8 +166,9 @@ dump_init ()
     char new_dump_fn[512];
     Sprintf(new_dump_fn, "%s", dump_format_str(dump_fn));
     dump_fp = fopen (new_dump_fn, "w");
-    chmod(new_dump_fn, dumpmode);
-    if (!dump_fp) {
+    if (dump_fp) {
+      chmod(new_dump_fn, dumpmode);
+    } else {
       pline("Can't open %s for output.", dump_fn);
       pline("Dump file not created.");
     }
