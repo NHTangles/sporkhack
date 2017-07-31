@@ -662,18 +662,22 @@ touch_whereis()
 	FILE* fp;
 	char whereis_file[255];
 	char whereis_work[255];
+        mode_t whereis_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
 
 #ifdef WIN32
 	Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
 #else
 	Sprintf(whereis_file,"%s.whereis",plname);
 #endif
-	Sprintf(whereis_work,"%d,%d,%d,%d,%d,0,0,%s,%s,%s,%d,%d\n",
+	Sprintf(whereis_work,"depth=%d:dnum=%d:hp=%d:maxhp=%d:turns=%d:role=%s:race=%s:gender=%s:align=%s:amulet=%d:playing=1\n",
 			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves,
-			urole.name.m,urace.adj,u.mfemale ? "F" : "M",u.ualign.type + 2,
+			urole.filecode,urace.filecode,u.mfemale ? "Fem" : "Mal",
+                        (u.ualign.type == A_CHAOTIC ? "Cha" : (u.ualign.type == A_NEUTRAL ? "Neu" : "Law")),
 			u.uhave.amulet ? 1 : 0);
 	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
 	if (fp) {
+                chmod(fqname(whereis_file, LEVELPREFIX, 0), whereis_mode);
 		fwrite(whereis_work,strlen(whereis_work),1,fp);
 		fclose(fp);
 	}
@@ -689,18 +693,20 @@ delete_whereis()
 	FILE* fp;
 	char whereis_file[255];
 	char whereis_work[255];
+        mode_t whereis_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 #if defined (WIN32)
 	Sprintf(whereis_file,"%s-%s.whereis",get_username(0),plname);
 #else
 	Sprintf(whereis_file,"%s.whereis",plname);
 #endif
-	Sprintf(whereis_work,"%d,%d,%d,%d,%d,%d,1,%s,%s,%s,%d,%d\n",
-			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves, 
-			u.uevent.ascended ? 2 : killer ? 1 : 0,
-			urole.name.m,urace.adj,u.mfemale ? "F" : "M",u.ualign.type + 2,
+	Sprintf(whereis_work,"depth=%d:dnum=%d:hp=%d:maxhp=%d:turns=%d:role=%s:race=%s:gender=%s:align=%s:amulet=%d:playing=0\n",
+			depth(&u.uz), u.uz.dnum, u.uhp, u.uhpmax, moves,
+			urole.name.m,urace.adj,u.mfemale ? "Fem" : "Mal",
+                        (u.ualign.type == A_CHAOTIC ? "Cha" : (u.ualign.type == A_NEUTRAL ? "Neu" : "Law")),
 			u.uhave.amulet ? 1 : 0);
 	fp = fopen_datafile(whereis_file,"w",LEVELPREFIX);
 	if (fp) {
+                chmod(fqname(whereis_file, LEVELPREFIX, 0), whereis_mode);
 		fwrite(whereis_work,strlen(whereis_work),1,fp);
 		fclose(fp);
 	}
