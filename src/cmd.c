@@ -108,6 +108,7 @@ STATIC_PTR int NDECL(doprev_message);
 STATIC_PTR int NDECL(timed_occupation);
 STATIC_PTR int NDECL(doextcmd);
 STATIC_PTR int NDECL(domonability);
+STATIC_PTR int NDECL(dooverview_or_wiz_where);
 STATIC_PTR int NDECL(dotravel);
 # ifdef WIZARD
 int NDECL(wiz_show_rooms);
@@ -548,6 +549,17 @@ wiz_show_rooms()
     display_nhwindow(win, TRUE);
     destroy_nhwindow(win);
     return 0;
+}
+
+STATIC_PTR int
+dooverview_or_wiz_where()
+{
+#ifdef WIZARD
+	//if (wizard) return wiz_where();
+	//else
+#endif
+	dooverview();
+	return 0;
 }
 
 /* ^W command - wish for something */
@@ -1971,9 +1983,8 @@ static const struct func_tab cmdlist[] = {
 	{C('i'), TRUE, wiz_identify},
 #endif
 	{C('l'), TRUE, doredraw}, /* if number_pad is set */
-#ifdef WIZARD
-	{C('o'), TRUE, wiz_where},
-#endif
+	{C('n'), TRUE, donamelevel}, /* if number_pad is set */
+	{C('o'), TRUE, dooverview_or_wiz_where}, /* depending on wizard status */
 	{C('p'), TRUE, doprev_message},
 	{C('r'), TRUE, doredraw},
 	{C('t'), TRUE, dotele},
@@ -2084,6 +2095,7 @@ static const struct func_tab cmdlist[] = {
 
 struct ext_func_tab extcmdlist[] = {
 	{"adjust", "adjust inventory letters", doorganize, TRUE},
+	{"annotate", "name current level", donamelevel, TRUE},
 	{"chat", "talk to someone", dotalk, TRUE},	/* converse? */
 	{"conduct", "list which challenges you have adhered to", doconduct, TRUE},
 	{"dip", "dip an object into something", dodip, FALSE},
@@ -2096,6 +2108,7 @@ struct ext_func_tab extcmdlist[] = {
 	{"monster", "use a monster's special ability", domonability, TRUE},
 	{"name", "name an item or type of object", ddocall, TRUE},
 	{"offer", "offer a sacrifice to the gods", dosacrifice, FALSE},
+	{"overview", "show an overview of the dungeon", dooverview, TRUE},
 	{"pray", "pray to the gods for help", dopray, TRUE},
 	{"quit", "exit without saving current game", done2, TRUE},
 #ifdef STEED
