@@ -148,6 +148,12 @@ save_dungeon(fd, perform_write, free_data)
 	bwrite(fd, (genericptr_t) level_info,
 			(unsigned)count * sizeof (struct linfo));
 	bwrite(fd, (genericptr_t) &inv_pos, sizeof inv_pos);
+        for (count = 0, curr_ms = mapseenchn; curr_ms; curr_ms = curr_ms->next)
+            count++;
+        bwrite(fd, (genericptr_t) &count, sizeof(count));
+
+        for (curr_ms = mapseenchn; curr_ms; curr_ms = curr_ms->next)
+            save_mapseen(fd, curr_ms);
     }
 
     if (free_data) {
@@ -2068,6 +2074,11 @@ recalc_mapseen()
 			} else if (rooms[x].rtype == TEMPLE)
 				/* altar and temple alignment handled below */
 				mptr->feat.ntemple = min(mptr->feat.ntemple + 1, 3);
+                        else if (rooms[x].rtype == COURT)
+                                /* we can only report throne rooms, becuase thrones
+                                 * don't exist as dungeon features.  Throne room will
+                                 * still be reported even after throne vanishes */
+				mptr->feat.nthrone = min(mptr->feat.nthrone + 1, 3);
 		}
 	}
 
@@ -2118,9 +2129,11 @@ recalc_mapseen()
 			case FOUNTAIN:
 				mptr->feat.nfount = min(mptr->feat.nfount + 1, 3);
 				break;
+                        /* Thrones are not dungeon features, but objects
 			case THRONE:
 				mptr->feat.nthrone = min(mptr->feat.nthrone + 1, 3);
 				break;
+                        */
 			case SINK:
 				mptr->feat.nsink = min(mptr->feat.nsink + 1, 3);
 				break;
@@ -2349,7 +2362,7 @@ boolean printdun;
 
 		ADDNTOBUF("fountain", mptr->feat.nfount)
 		ADDNTOBUF("sink", mptr->feat.nsink)
-		ADDNTOBUF("throne", mptr->feat.nthrone)
+		ADDNTOBUF("throne room", mptr->feat.nthrone)
 		ADDNTOBUF("tree", mptr->feat.ntree);
 		/*
 		ADDTOBUF("water", mptr->feat.water)

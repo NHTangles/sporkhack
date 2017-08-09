@@ -59,7 +59,6 @@ enum {
     STAIRS,
     LADDER,
     FOUNTAIN,
-    THRONE,
     SINK,
     GRAVE,
     ALTAR,
