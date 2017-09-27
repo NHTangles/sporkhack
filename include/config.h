@@ -406,7 +406,7 @@ typedef long glyph_t;
 /* #define SIMPLE_MAIL */ /* dgamelaunch simple mail */
 
 /* #define LIVELOG  */       /* live logging of player actions */
-#define LIVELOGFILE "livelog"   /* file to output to */
+/* #define LIVELOGFILE "livelog" */  /* file to output to */
 
 /* no earlygame livelog spam for broken  conducts */
 #define LL_CONDUCT_THRESHOLD 3000 /* min turncount */
