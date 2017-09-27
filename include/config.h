@@ -178,7 +178,7 @@
 /* #define COMPRESS "/usr/bin/compress"	 Lempel-Ziv compression */
 /* #define COMPRESS_EXTENSION ".Z"	 compress's extension */
 /* An example of one alternative you might want to use: */
-#define COMPRESS "/bin/gzip" /* FSF gzip compression */
+#define COMPRESS "/usr/bin/gzip" /* FSF gzip compression */
 #define COMPRESS_EXTENSION ".gz" 	/* normal gzip extension */
 #endif
 
@@ -191,7 +191,7 @@
  *	a tar-like file, thus making a neater installation.  See *conf.h
  *	for detailed configuration.
  */
-#define DLB /* not supported on all platforms */
+//#define DLB /* not supported on all platforms */
 
 /*
  *	Defining INSURANCE slows down level changes, but allows games that
@@ -210,7 +210,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/opt/sporkhack/var"
+#  define HACKDIR "/opt/games/sporkhack/"
 # endif
 
 /*
@@ -220,7 +220,7 @@
  * since the user might create files in a directory of his choice.
  * Of course SECURE is meaningful only if HACKDIR is defined.
  */
-/* #define SECURE */ 	/* do setuid(getuid()) after chdir() */
+#define SECURE 	/* do setuid(getuid()) after chdir() */
 
 /*
  * If it is desirable to limit the number of people that can play Hack
@@ -381,7 +381,6 @@ typedef long glyph_t;
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # define MENU_COLOR
 # define MENU_COLOR_REGEX
-# define MENU_COLOR_REGEX_POSIX
 /* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
  * GNU specific functions by default, POSIX functions with
  * MENU_COLOR_REGEX_POSIX).
