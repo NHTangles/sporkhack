@@ -4,10 +4,10 @@
 
 #include "hack.h"
 
-STATIC_DCL boolean FDECL(known_hitum, (struct monst *,int *,struct attack *));
+STATIC_DCL boolean FDECL(known_hitum, (struct monst *,int *,struct attack *,int));
 STATIC_DCL void FDECL(steal_it, (struct monst *, struct attack *));
 STATIC_DCL boolean FDECL(hitum, (struct monst *,int,struct attack *));
-STATIC_DCL boolean FDECL(hmon_hitmon, (struct monst *,struct obj *,int));
+STATIC_DCL boolean FDECL(hmon_hitmon, (struct monst *,struct obj *,int,int));
 STATIC_DCL void FDECL(noisy_hit,(struct monst*,struct obj*,int));
 #ifdef STEED
 STATIC_DCL int FDECL(joust, (struct monst *,struct obj *));
@@ -23,8 +23,7 @@ STATIC_DCL void FDECL(nohandglow, (struct monst *));
 STATIC_DCL boolean FDECL(shade_aware, (struct obj *));
 
 extern boolean notonhead;	/* for long worms */
-/* The below might become a parameter instead if we use it a lot */
-static int dieroll;
+
 /* Used to flag attacks caused by Stormbringer's maliciousness. */
 static boolean override_confirmation = FALSE;
 
@@ -436,10 +435,11 @@ atk_done:
 }
 
 STATIC_OVL boolean
-known_hitum(mon, mhit, uattk)	/* returns TRUE if monster still lives */
+known_hitum(mon, mhit, uattk, dieroll)	/* returns TRUE if monster still lives */
 register struct monst *mon;
 register int *mhit;
 struct attack *uattk;
+int dieroll;
 {
 	register boolean malive = TRUE;
 
@@ -462,11 +462,11 @@ struct attack *uattk;
 	    /* we hit the monster; be careful: it might die or
 	       be knocked into a different location */
 	    notonhead = (mon->mx != x || mon->my != y);
-	    malive = hmon(mon, uwep, 0);
+	    malive = hmon(mon, uwep, 0, dieroll);
 	    /* this assumes that Stormbringer was uwep not uswapwep */ 
 	    if (malive && u.twoweap && !override_confirmation &&
 		    m_at(x, y) == mon)
-		malive = hmon(mon, uswapwep, 0);
+		malive = hmon(mon, uswapwep, 0, dieroll);
 	    if (malive) {
 		/* monster still alive */
 		if(!rn2(25) && mon->mhp < mon->mhpmax/2
@@ -502,19 +502,21 @@ int tmp;
 struct attack *uattk;
 {
 	boolean malive;
-	int mhit = (tmp > (dieroll = rnd(20)) || u.uswallow);
+        int dieroll = rnd(20);
+	int mhit = (tmp > dieroll || u.uswallow);
 
 	if(tmp > dieroll) exercise(A_DEX, TRUE);
-	malive = known_hitum(mon, &mhit, uattk);
+	malive = known_hitum(mon, &mhit, uattk, dieroll);
 	(void) passive(mon, mhit, malive, AT_WEAP);
 	return(malive);
 }
 
 boolean			/* general "damage monster" routine */
-hmon(mon, obj, thrown)		/* return TRUE if mon still alive */
+hmon(mon, obj, thrown, dieroll)		/* return TRUE if mon still alive */
 struct monst *mon;
 struct obj *obj;
 int thrown;
+int dieroll;
 {
 	boolean result, anger_guards;
 
@@ -527,7 +529,7 @@ int thrown;
 	noisy_hit(mon,obj,thrown);
 
 	/* go ahead and 'hit' the monster */
-	result = hmon_hitmon(mon, obj, thrown);
+	result = hmon_hitmon(mon, obj, thrown, dieroll);
 
 	if (mon->ispriest && !rn2(2)) ghod_hitsu(mon);
 	if (anger_guards) (void)angry_guards(!flags.soundok);
@@ -537,10 +539,11 @@ int thrown;
 
 /* guts of hmon() */
 STATIC_OVL boolean
-hmon_hitmon(mon, obj, thrown)
+hmon_hitmon(mon, obj, thrown, dieroll)
 struct monst *mon;
 struct obj *obj;
 int thrown;
+int dieroll;
 {
 	int tmp;
 	struct permonst *mdat = mon->data;
@@ -2088,6 +2091,7 @@ register int tmp;
 	int	i, sum[NATTK], hittmp = 0;
 	int	nsum = 0;
 	int	dhit = 0;
+	int	dieroll;
 
 	for(i = 0; i < NATTK; i++) {
 
@@ -2112,7 +2116,7 @@ use_weapon:
 			/* KMH -- Don't accumulate to-hit bonuses */
 			if (uwep) tmp -= hittmp;
 			/* Enemy dead, before any special abilities used */
-			if (!known_hitum(mon,&dhit,mattk)) {
+			if (!known_hitum(mon,&dhit,mattk,dieroll)) {
 			    sum[i] = 2;
 			    break;
 			} else sum[i] = dhit;
@@ -2141,7 +2145,7 @@ use_weapon:
 		case AT_BUTT:
 		case AT_TENT:
 			if (i==0 && uwep && (youmonst.data->mlet==S_LICH)) goto use_weapon;
-			if ((dhit = (tmp > rnd(20) || u.uswallow)) != 0) {
+			if ((dhit = (tmp > (dieroll = rnd(20)) || u.uswallow)) != 0) {
 			    int compat;
 
 			    if (!u.uswallow &&
