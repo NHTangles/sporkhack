@@ -1108,9 +1108,11 @@ xchar	rtype, rlit;
 			xchar hx, hy, lx, ly, dx, dy;
 
 			hx = rn2(COLNO-1-2);
+			while ((lx = rn2(COLNO-hx)) > hx)
+                            hx = lx;
 			hy = rn2(ROWNO-2);
-			lx = rnd(COLNO-hx);
-			ly = rn2(ROWNO-hy);
+			while ((ly = rn2(ROWNO-hy)) > hy)
+                            hy = ly;
 			if (vault)
 			    dx = dy = 1;
 			else {
@@ -1199,7 +1201,7 @@ xchar	rtype, rlit;
 			    continue;
 			fail = FALSE;
 		}
-	} while (++trycnt <= 100 && fail);
+	} while (++trycnt <= 10000 && fail);
 	if (fail) {	/* creation of room failed ? */
 		return FALSE;
 	}
