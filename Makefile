@@ -14,11 +14,11 @@
 # MAKE = make
 
 # make NetHack
-PREFIX	 = /opt/games/sporkhack
+PREFIX	 = /opt
 GAME     = sporkhack
 # GAME     = nethack.prg
-GAMEUID  = slashem
-GAMEGRP  = slashem
+GAMEUID  = games
+GAMEGRP  = games
 
 # Permissions - some places use setgid instead of setuid, for instance
 # See also the option "SECURE" in include/config.h
@@ -35,9 +35,9 @@ DIRPERM  = 0755
 # therefore there should not be anything in GAMEDIR that you want to keep
 # (if there is, you'll have to do the installation by hand or modify the
 # instructions)
-GAMEDIR  = $(PREFIX)
+GAMEDIR  = $(PREFIX)/games/lib/$(GAME)dir
 VARDIR  = $(GAMEDIR)
-SHELLDIR = /usr/games
+SHELLDIR = $(PREFIX)/games
 
 # per discussion in Install.X11 and Install.Qt
 VARDATND = 
