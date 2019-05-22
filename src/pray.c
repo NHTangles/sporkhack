@@ -669,12 +669,18 @@ gcrownu()
     case A_LAWFUL:
 	u.uevent.uhand_of_elbereth = 1;
 	verbalize("I crown thee...  The Hand of Elbereth!");
+        #ifdef LIVELOG
+                livelog_printf("was crowned \"The Hand of Elbereth\" by %s", u_gname());
+        #endif
 	break;
     case A_NEUTRAL:
 	u.uevent.uhand_of_elbereth = 2;
 	in_hand = (uwep && uwep->oartifact == ART_VORPAL_BLADE);
 	already_exists = exist_artifact(LONG_SWORD, artiname(ART_VORPAL_BLADE));
 	verbalize("Thou shalt be my Envoy of Balance!");
+        #ifdef LIVELOG
+                livelog_printf("became %s Envoy of Balance", s_suffix(u_gname()));
+        #endif
 	break;
     case A_CHAOTIC:
 	u.uevent.uhand_of_elbereth = 3;
@@ -682,6 +688,11 @@ gcrownu()
 	already_exists = exist_artifact(RUNESWORD, artiname(ART_STORMBRINGER));
 	verbalize("Thou art chosen to %s for My Glory!",
 		  already_exists && !in_hand ? "take lives" : "steal souls");
+        #ifdef LIVELOG
+                livelog_printf("was chosen to %s for the Glory of %s",
+                  already_exists && !in_hand ? "take lives" : "steal souls",
+                  u_gname());
+        #endif
 	break;
     }
 
@@ -1169,8 +1180,11 @@ dosacrifice()
 	extern const int monstr[];
 
 	/* KMH, conduct */
-	u.uconduct.gnostic++;
-
+	if(!u.uconduct.gnostic++)
+        #ifdef LIVELOG
+                livelog_conduct("rejected atheism by offering %s on an altar of %s", xname(otmp), a_gname())
+        #endif
+		;
 	/* you're handling this corpse, even if it was killed upon the altar */
 	feel_cockatrice(otmp, TRUE);
 
@@ -1240,7 +1254,7 @@ dosacrifice()
 	    else useupf(otmp, 1L);
 
 		 /* create Dirge from player's longsword here if possible */
-		 if (u.ualign.type == A_CHAOTIC && Role_if(PM_KNIGHT) && 
+		 if (u.ualign.type == A_CHAOTIC && Role_if(PM_KNIGHT) &&
 				 !u.ugangr && u.ualign.record > 0 &&
 				 uwep && uwep->otyp == LONG_SWORD && !uwep->oartifact &&
 				 !exist_artifact(LONG_SWORD, artiname(ART_DIRGE))) {
@@ -1251,6 +1265,10 @@ dosacrifice()
 			 discover_artifact(ART_DIRGE);
 			 exercise(A_WIS,TRUE);
 			 pline("Your sword slithers in your hand and seems to change!");
+                         #ifdef LIVELOG
+                             livelog_printf("had %s gifted to %s by the grace of %s", xname(otmp), uhim(), u_gname())
+                         #endif
+                         ;
 		 }
 
 	    return(1);
@@ -1320,7 +1338,7 @@ dosacrifice()
 		pline("A cloud of %s smoke surrounds you...",
 		      hcolor((const char *)"orange"));
 		done(ESCAPED);
-	    } else { 
+	    } else {
 			/* Would this action put you in positive standing? */
 			adjalign(10);
 			/* You'd better hope so... */
@@ -1442,7 +1460,7 @@ dosacrifice()
 			      hcolor(
 			      u.ualign.type == A_LAWFUL ? NH_WHITE :
 			      u.ualign.type ? NH_BLACK : (const char *)"gray"));
-			 /* 
+			 /*
 			  * The old test here started with "if rnl(u.ulevel) > 6", thus ensuring
 			  * that the vast majority of altars converted in the dungeon never,
 			  * EVER pissed off the owner due to the stilted effect of luck.
@@ -1450,7 +1468,7 @@ dosacrifice()
 			  * We can fix that.  god should be pissed if you muck up his altars.
 			  * If you muck up his temples, he should be even more pissed.
 			  */
-		    if (u.ualign.record > 0 && rnd(u.ualign.record) > 
+		    if (u.ualign.record > 0 && rnd(u.ualign.record) >
 					 (3*ALIGNLIM)/(temple_occupied(u.urooms) ? 12 : u.ulevel)) {
 				summon_minion(altaralign, TRUE);
 			 }
@@ -1521,26 +1539,26 @@ dosacrifice()
 		  *
 		  * The player can gain an artifact;
 	     * The chance goes down as the number of artifacts goes up.
-		  * 
+		  *
 		  * The player can also get handed just a plain old hunk of weaponry
-		  * or piece of armor, but it will be blessed, +3 to +5, fire/rustproof, and 
-		  * if it's a weapon, it'll be in one of the player's available skill 
-		  * slots. The lower level you are, the more likely it is that you'll 
+		  * or piece of armor, but it will be blessed, +3 to +5, fire/rustproof, and
+		  * if it's a weapon, it'll be in one of the player's available skill
+		  * slots. The lower level you are, the more likely it is that you'll
 		  * get a hunk of ordinary junk rather than an artifact.
 		  *
 		  * Note that no artifact is guaranteed; it's still subject to the
 		  * chances of generating one of those in the first place; these are
 		  * just the chances that an artifact will even be considered as a gift.
 		  *
-		  * level  4: 10% chance  level  9: 20% chance  level 12: 30% chance 
-		  * level 14: 40% chance  level 17: 50% chance  level 19: 60% chance 
-		  * level 21: 70% chance  level 23: 80% chance  level 24: 90% chance 
+		  * level  4: 10% chance  level  9: 20% chance  level 12: 30% chance
+		  * level 14: 40% chance  level 17: 50% chance  level 19: 60% chance
+		  * level 21: 70% chance  level 23: 80% chance  level 24: 90% chance
 		  * level 26: 100% chance
 		  */
 
 		 if (rn2(10) >= (nchance*nchance)/100) {
 			 if (u.uluck >= 0 && !rn2(6 + (2 * u.ugifts))) {
-				 int typ, ncount = 0; 
+				 int typ, ncount = 0;
 				 if (rn2(2)) {
 					/* don't give unicorn horns or anything the player's restricted in */
 					do {
@@ -1564,6 +1582,10 @@ dosacrifice()
 						u.ugifts++;
 						u.ublesscnt = rnz(300 + (50 * u.ugifts));
 						exercise(A_WIS, TRUE);
+                                                #ifdef LIVELOG
+                                                    livelog_printf("had a %s bestowed upon %s by %s", xname(otmp), uhim(), u_gname())
+                                                #endif
+                                                ;
 						makeknown(otmp->otyp);
 						return 1;
 					}
@@ -1581,6 +1603,10 @@ dosacrifice()
 				u.ugifts++;
 				u.ublesscnt = rnz(300 + (50 * nartifacts));
 				exercise(A_WIS, TRUE);
+                                #ifdef LIVELOG
+                                    livelog_printf("had %s bestowed upon %s by %s", xname(otmp), uhim(), u_gname())
+                                #endif
+                                ;
 				/* make sure we can use this weapon */
 				unrestrict_weapon_skill(weapon_type(otmp));
 				discover_artifact(otmp->oartifact);
@@ -1660,7 +1686,11 @@ dopray()
 	if (yn("Are you sure you want to pray?") == 'n')
 	    return 0;
 
-    u.uconduct.gnostic++;
+    if(!u.uconduct.gnostic++)
+    #ifdef LIVELOG
+                livelog_conduct("rejected atheism with a prayer")
+    #endif
+                ;
     /* Praying implies that the hero is conscious and since we have
        no deafness attribute this implies that all verbalized messages
        can be heard.  So, in case the player has used the 'O' command
@@ -1771,7 +1801,11 @@ doturn()
 		You("don't know how to turn undead!");
 		return(0);
 	}
-	u.uconduct.gnostic++;
+	if(!u.uconduct.gnostic++)
+        #ifdef LIVELOG
+                livelog_conduct("rejected atheism by turning undead")
+        #endif
+		;
 
 	if ((u.ualign.type != A_CHAOTIC &&
 		    (is_demon(youmonst.data) || is_undead(youmonst.data))) ||

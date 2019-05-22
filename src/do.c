@@ -207,7 +207,7 @@ const char *verb;
 		    map_background(x, y, 0);
 		    newsym(x, y);
 		}
-		water_damage(obj, FALSE, FALSE);
+		return water_damage(obj, FALSE, FALSE);
 	} else if (u.ux == x && u.uy == y &&
 		(!u.utrap || u.utraptype != TT_PIT) &&
 		(t = t_at(x,y)) != 0 && t->tseen &&
@@ -235,7 +235,11 @@ doaltarobj(obj)  /* obj is an object dropped on an altar */
 		return;
 
 	/* KMH, conduct */
-	u.uconduct.gnostic++;
+	if(!u.uconduct.gnostic++)
+        #ifdef LIVELOG
+                livelog_conduct("eschewed atheism, by dropping %s on an altar", doname(obj))
+        #endif
+		;
 
 	if ((obj->blessed || obj->cursed) && obj->oclass != COIN_CLASS) {
 		There("is %s flash as %s %s the altar.",
@@ -817,6 +821,9 @@ dodown()
 			return(0);
 		else pline("So be it.");
 		u.uevent.gehennom_entered = 1;	/* don't ask again */
+#ifdef LIVELOG
+                livelog_write_string("entered Gehennom for the first time");
+#endif
 	}
 
 	if(!next_to_u()) {
@@ -971,8 +978,12 @@ boolean at_stairs, falling, portal;
 	if (dunlev(newlevel) > dunlevs_in_dungeon(newlevel))
 		newlevel->dlevel = dunlevs_in_dungeon(newlevel);
 	if (newdungeon && In_endgame(newlevel)) { /* 1st Endgame Level !!! */
-		if (u.uhave.amulet)
+		if (u.uhave.amulet) {
+#ifdef LIVELOG
+		livelog_write_string("entered the Planes");
+#endif
 		    assign_level(newlevel, &earth_level);
+		}
 		else return;
 	}
 	new_ledger = ledger_no(newlevel);

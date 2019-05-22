@@ -2513,7 +2513,7 @@ register struct	obj	*obj;
 	    } else if (u.dz) {
 			disclose = zap_updown(obj);
 	    } else {
-			(void) bhit(u.dx,u.dy, rn1(8,6),ZAPPED_WAND, bhitm,bhito, obj);
+			(void) bhit(u.dx,u.dy, rn1(8,6),ZAPPED_WAND, bhitm,bhito, obj, NULL);
 	    }
 	    /* give a clue if obj_zapped */
 	    if (obj_zapped)
@@ -2674,16 +2674,18 @@ register struct monst *mtmp;
  *  one is revealed for a weapon, but if not a weapon is left up to fhitm().
  */
 struct monst *
-bhit(ddx,ddy,range,weapon,fhitm,fhito,obj)
+bhit(ddx,ddy,range,weapon,fhitm,fhito,obj,obj_destroyed)
 register int ddx,ddy,range;		/* direction and range */
 int weapon;				/* see values in hack.h */
 int FDECL((*fhitm), (MONST_P, OBJ_P)),	/* fns called when mon/obj hit */
     FDECL((*fhito), (OBJ_P, OBJ_P));
 struct obj *obj;			/* object tossed/used */
+boolean *obj_destroyed;			/* has object been deallocated? Pointer to boolean, may be NULL */
 {
 	struct monst *mtmp;
 	uchar typ;
 	boolean shopdoor = FALSE, point_blank = TRUE;
+	if (obj_destroyed) { *obj_destroyed = FALSE; }
 
 	if (weapon == KICKED_WEAPON) {
 	    /* object starts one square in front of player */
@@ -2727,6 +2729,7 @@ struct obj *obj;			/* object tossed/used */
 		    hits_bars(&obj, x - ddx, y - ddy,
 			      point_blank ? 0 : !rn2(5), 1)) {
 		/* caveat: obj might now be null... */
+		if (obj == NULL && obj_destroyed) { *obj_destroyed = TRUE; }
 		bhitpos.x -= ddx;
 		bhitpos.y -= ddy;
 		break;
@@ -4222,6 +4225,9 @@ void
 makewish()
 {
 	static char buf[BUFSZ] = "";
+#ifdef LIVELOG
+        char origbuf[BUFSZ];
+#endif
 	struct obj *otmp, nothing;
 	int tries = 0;
 
@@ -4230,6 +4236,9 @@ makewish()
 retry:
 	getlin("For what do you wish?", buf);
 	if(buf[0] == '\033') buf[0] = 0;
+#ifdef LIVELOG
+        strcpy(origbuf, buf);
+#endif
 	stripctrl(buf);
 	trim(buf);
 	/*
@@ -4255,6 +4264,12 @@ retry:
 	u.uconduct.wishes++;
 
 	if (otmp != &zeroobj) {
+
+#ifdef LIVELOG
+            char llog[BUFSZ+20];
+            Sprintf(llog, "wished for \"%s\"", mungspaces(origbuf));
+            livelog_write_string(llog);
+#endif
 
 #ifdef WISH_TRACKER
 		/* write it out to our universal wishtracker file */

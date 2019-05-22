@@ -1588,10 +1588,16 @@ register struct monst *mtmp;
 #endif
 	if(mtmp->iswiz) wizdead();
 	if(mtmp->data->msound == MS_NEMESIS) nemdead();
-        
+
 #ifdef RECORD_ACHIEVE
         if(mtmp->data == &mons[PM_MEDUSA])
             achieve.killed_medusa = 1;
+#endif
+#ifdef LIVELOG
+        if (mtmp->data->geno & G_UNIQ)
+            livelog_printf( "%s %s",
+                   nonliving(mtmp->data) ? "destroyed" : "killed",
+                   noit_mon_nam(mtmp));
 #endif
 
 	if(glyph_is_invisible(levl[mtmp->mx][mtmp->my].glyph))

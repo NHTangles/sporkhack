@@ -260,6 +260,11 @@ struct obj *obj;
 		if (u.uhave.amulet) impossible("already have amulet?");
 		u.uhave.amulet = 1;
 #ifdef RECORD_ACHIEVE
+#ifdef LIVELOG
+                if (!achieve.get_amulet) {
+                    livelog_write_string("picked up the Amulet of Yendor");
+                }
+#endif
 		achieve.get_amulet = 1;
 #endif
 #ifdef WISH_TRACKER
@@ -274,18 +279,33 @@ struct obj *obj;
 		if (u.uhave.menorah) impossible("already have candelabrum?");
 		u.uhave.menorah = 1;
 #ifdef RECORD_ACHIEVE
+#ifdef LIVELOG
+                if (!achieve.get_candelabrum) {
+                    livelog_write_string("picked up the Candelabrum of Invocation");
+                }
+#endif
                 achieve.get_candelabrum = 1;
 #endif
 	} else if (obj->otyp == BELL_OF_OPENING) {
 		if (u.uhave.bell) impossible("already have silver bell?");
 		u.uhave.bell = 1;
 #ifdef RECORD_ACHIEVE
+#ifdef LIVELOG
+                if (!achieve.get_bell) {
+                    livelog_write_string("picked up the Bell of Opening");
+                }
+#endif
                 achieve.get_bell = 1;
 #endif
 	} else if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
 		if (u.uhave.book) impossible("already have the book?");
 		u.uhave.book = 1;
 #ifdef RECORD_ACHIEVE
+#ifdef LIVELOG
+                if (!achieve.get_book) {
+                    livelog_write_string("picked up the Book of the Dead");
+                }
+#endif
                 achieve.get_book = 1;
 #endif
 	} else if (obj->oartifact) {
@@ -300,11 +320,21 @@ struct obj *obj;
 
 #ifdef RECORD_ACHIEVE
         if(obj->otyp == LUCKSTONE && obj->record_achieve_special) {
+#ifdef LIVELOG
+                if (!achieve.get_luckstone) {
+                    livelog_write_string("retrieved the Mine's End luckstone");
+                }
+#endif
                 achieve.get_luckstone = 1;
                 obj->record_achieve_special = 0;
         } else if((obj->otyp == AMULET_OF_REFLECTION ||
                    obj->otyp == BAG_OF_HOLDING) &&
                   obj->record_achieve_special) {
+#ifdef LIVELOG
+                if (!achieve.finish_sokoban) {
+                    livelog_write_string("completed Sokoban");
+                }
+#endif
                 achieve.finish_sokoban = 1;
                 obj->record_achieve_special = 0;
         }

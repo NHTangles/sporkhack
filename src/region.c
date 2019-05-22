@@ -926,6 +926,7 @@ genericptr_t p2;
 	if (!nonliving(mtmp->data) && !breathless(mtmp->data)) {
 	    if (cansee(mtmp->mx, mtmp->my))
 		pline("%s coughs!", Monnam(mtmp));
+            if (heros_fault(reg))
 	    setmangry(mtmp);
 	    if (haseyes(mtmp->data) && mtmp->mcansee) {
 		mtmp->mblinded = 1;

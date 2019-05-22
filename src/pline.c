@@ -17,6 +17,7 @@ static char *FDECL(You_buf, (int));
 
 #if defined(DUMP_LOG) && defined(DUMPMSGS)
 char msgs[DUMPMSGS][BUFSZ];
+int msgs_count[DUMPMSGS];
 int lastmsg = -1;
 #endif
 
@@ -108,8 +109,14 @@ pline VA_DECL(const char *, line)
 
 #if defined(DUMP_LOG) && defined(DUMPMSGS)
 	if (DUMPMSGS > 0 && !program_state.gameover) {
-	  lastmsg = (lastmsg + 1) % DUMPMSGS;
-	  strncpy(msgs[lastmsg], line, BUFSZ);
+		/* count identical messages */
+		if (!strncmp(msgs[lastmsg], line, BUFSZ)) {
+			msgs_count[lastmsg] += 1;
+		} else if (strncmp(line, "Unknown command", 15) ) {
+			lastmsg = (lastmsg + 1) % DUMPMSGS;
+			strncpy(msgs[lastmsg], line, BUFSZ);
+			msgs_count[lastmsg] = 1;
+		}
 	}
 #endif
 	if (!iflags.window_inited) {
@@ -129,7 +136,15 @@ pline VA_DECL(const char *, line)
 	putstr(WIN_MESSAGE, 0, line);
 
 	strncpy(prevmsg, line, BUFSZ);
-	if (typ == MSGTYP_STOP) display_nhwindow(WIN_MESSAGE, TRUE); /* --more-- */
+	switch (typ) {
+	case MSGTYP_ALERT:
+	    iflags.msg_is_alert = TRUE; /* <TAB> */
+	    /* FT */
+	case MSGTYP_STOP:
+	    display_nhwindow(WIN_MESSAGE, TRUE); /* --more-- */
+	    break;
+	}
+	iflags.msg_is_alert = FALSE;
 }
 
 /*VARARGS1*/

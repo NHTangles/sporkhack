@@ -1854,17 +1854,22 @@ struct mkroom	*croom;
 	    struct monst *was;
 	    struct obj *obj;
 	    int wastyp;
+	    int i=0; /* prevent endless loop in case makemon always fails */
 
 	    /* Named random statues are of player types, and aren't stone-
 	     * resistant (if they were, we'd have to reset the name as well as
 	     * setting corpsenm).
 	     */
-	    for (wastyp = otmp->corpsenm; ; wastyp = rndmonnum()) {
+	    for (wastyp = otmp->corpsenm; i < 1000 ; i++) {
 		/* makemon without rndmonst() might create a group */
 		was = makemon(&mons[wastyp], 0, 0, NO_MM_FLAGS);
+		if (was) {
 		if (!resists_ston(was)) break;
 		mongone(was);
-	    }
+	        }
+		wastyp = rndmonnum();
+		}
+	        if (was) {
 	    otmp->corpsenm = wastyp;
 	    while(was->minvent) {
 		obj = was->minvent;
@@ -1874,6 +1879,7 @@ struct mkroom	*croom;
 	    }
 	    otmp->owt = weight(otmp);
 	    mongone(was);
+	}
 	}
 
 #ifdef RECORD_ACHIEVE

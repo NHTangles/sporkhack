@@ -1198,7 +1198,7 @@ dump_spells()
 	Sprintf(buf, "%-20s   Level    %-12s Fail  Memory", "    Name", "Category");
 	dump("  ",buf);
 	for (i = 0; i < MAXSPELL && spellid(i) != NO_SPELL; i++) {
-		Sprintf(buf, "%c - %-20s  %2d%s   %-12s %3d%%",
+		Sprintf(buf, "%c - %-20s  %2d%s   %-12s %3d%%" "   %3d%%",
 			spellet(i), spellname(i), spellev(i),
 			(spellknow(i) > 1000) ? " " : (spellknow(i) ? "!" : "*"),
 			spelltypemnemonic(spell_skilltype(spellid(i))),

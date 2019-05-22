@@ -20,7 +20,7 @@
 #	For Bull DPX/2 systems at B.O.S. 2.0 or higher use the following:
 #
 # CC = gcc -ansi -D_BULL_SOURCE -D_XOPEN_SOURCE -D_POSIX_SOURCE
-# 
+#
 #	If you are using GCC 2.2.2 or higher on a DPX/2, just use:
 #
 # CC = gcc -ansi
@@ -87,13 +87,13 @@ LFLAGS = -L/usr/X11R6/lib
 # the default values are fine
 
 # flags for debugging:
-CFLAGS = -g -I../include
+CFLAGS = -g -O -I../include
 
 # CFLAGS = -O -I../include
 # LFLAGS =
 
 LIBS =
- 
+
 # If you are cross-compiling, you must use this:
 #OBJDIR = .
 # otherwise, you can save a little bit of disk space with this:

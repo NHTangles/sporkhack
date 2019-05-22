@@ -410,9 +410,10 @@ add_menu(winid wid, int glyph, const anything identifier,
                 -- If you want this choice to be preselected when the
                    menu is displayed, set preselected to TRUE.
 */
-void curses_add_menu(winid wid, int glyph, const ANY_P * identifier,
-		CHAR_P accelerator, CHAR_P group_accel, int attr, 
-		const char *str, BOOLEAN_P presel)
+void
+curses_add_menu(winid wid, int glyph, const ANY_P * identifier,
+                CHAR_P accelerator, CHAR_P group_accel, int attr,
+                const char *str, BOOLEAN_P presel)
 {
     int curses_attr = curses_convert_attr(attr);
 

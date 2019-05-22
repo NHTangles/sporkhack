@@ -17,7 +17,7 @@
 #define FIRST_GEM    DILITHIUM_CRYSTAL
 #define FIRST_AMULET AMULET_OF_ESP
 #define LAST_AMULET  AMULET_OF_YENDOR
- 
+
 struct valuable_data { long count; int typ; };
 
 static struct valuable_data
@@ -45,6 +45,7 @@ STATIC_DCL void FDECL(savelife, (int));
 STATIC_DCL void FDECL(list_vanquished, (CHAR_P,BOOLEAN_P));
 #ifdef DUMP_LOG
 extern char msgs[][BUFSZ];
+extern int msgs_count[];
 extern int lastmsg;
 extern void NDECL(dump_spells);
 void FDECL(do_vanquished, (int, BOOLEAN_P, BOOLEAN_P));
@@ -811,6 +812,9 @@ int how;
 				killer = 0;
 				killer_format = 0;
 				ukiller = (struct monst*)0;
+#ifdef LIVELOG
+			livelog_write_string("averted death");
+#endif
 				return;
 			}
 		}
@@ -950,16 +954,21 @@ die:
 	if (strcmp(flags.end_disclose, "none") && how != PANICKED) {
 		disclose(how, taken);
 #if defined(DUMP_LOG) && defined(DUMPMSGS)
+		char tmpbuf[BUFSZ];
+		int i, j;
 		if (lastmsg >= 0) {
 		  dump ("", "Latest messages");
-		  for (i = lastmsg + 1; i < DUMPMSGS; i++) {
-		    if (msgs[i] && strcmp(msgs[i], "") )
+		for (j = lastmsg + 1; j < DUMPMSGS + lastmsg + 1; j++) {
+		  i = j % DUMPMSGS;
+		  if (msgs[i] && strcmp(msgs[i], "") ) {
+		    if (msgs_count[i] == 1) {
 		      dump ("  ", msgs[i]);
-		  } 
-		  for (i = 0; i <= lastmsg; i++) {
-		    if (msgs[i] && strcmp(msgs[i], "") )
-		      dump ("  ", msgs[i]);
-		  } 
+		    } else {
+		      Sprintf(tmpbuf, "%s (%dx)", msgs[i], msgs_count[i]);
+		      dump ("  ", tmpbuf);
+		    }
+		  }
+		}
 		  dump ("","");
 		}
 #endif
@@ -1636,6 +1645,56 @@ int how;
 	}
 
 	return newscore;
+}
+
+void
+mk_dgl_extrainfo()
+{
+#ifdef EXTRAINFO_FN
+    FILE *extrai = (FILE *)0;
+#ifdef UNIX
+    mode_t eimode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+#endif
+    char new_fn[512];
+
+    Sprintf(new_fn, "%s", dump_format_str(EXTRAINFO_FN));
+
+    extrai = fopen(new_fn, "w");
+    if (!extrai) {
+    } else {
+        int sortval = 0;
+        char tmpdng[16];
+        sortval += (u.uhave.amulet ? 1024 : 0);
+        if (Is_knox(&u.uz)) {
+            Sprintf(tmpdng, "%s", "Knx");
+            sortval += 245;
+        } else if (In_quest(&u.uz)) {
+            Sprintf(tmpdng, "%s%i", "Q", dunlev(&u.uz));
+            sortval += 250+(dunlev(&u.uz));
+        } else if (In_endgame(&u.uz)) {
+            Sprintf(tmpdng, "%s", "End");
+            sortval += 256;
+        } else if (In_tower(&u.uz)) {
+            Sprintf(tmpdng, "T%i", dunlev(&u.uz));
+            sortval += 235+(depth(&u.uz));
+        } else if (In_sokoban(&u.uz)) {
+            Sprintf(tmpdng, "S%i", dunlev(&u.uz));
+            sortval += 225+(depth(&u.uz));
+        } else if (In_mines(&u.uz)) {
+            Sprintf(tmpdng, "M%i", dunlev(&u.uz));
+            sortval += 215+(dunlev(&u.uz));
+        } else {
+            Sprintf(tmpdng, "D%i", depth(&u.uz));
+            sortval += (depth(&u.uz));
+        }
+
+#ifdef UNIX
+        chmod(new_fn, eimode);
+#endif
+        fprintf(extrai, "%i|%c %s", sortval, (u.uhave.amulet ? 'A' : ' '), tmpdng);
+        fclose(extrai);
+    }
+#endif /* EXTRAINFO_FN */
 }
 
 /*end.c*/

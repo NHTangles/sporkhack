@@ -15,13 +15,12 @@ struct monst *mon;
 	aligntyp atyp;
 	struct monst *mtmp;
 
-	/* Wielded Demonbane prevents demons from gating in others. */
-	if (uwep && uwep->oartifact == ART_DEMONBANE && is_demon(mon->data)) {
-		pline("%s looks puzzled for a moment.",Monnam(mon));
-		return;
-	}
-
 	if (mon) {
+	    /* Wielded Demonbane prevents demons from gating in others. */
+            if (uwep && uwep->oartifact == ART_DEMONBANE && is_demon(mon->data)) {
+                pline("%s looks puzzled for a moment.",Monnam(mon));
+                return;
+            }
 	    ptr = mon->data;
 	    atyp = (ptr->maligntyp==A_NONE) ? A_NONE : sgn(ptr->maligntyp);
 	    if (mon->ispriest || mon->data == &mons[PM_ALIGNED_PRIEST]
@@ -212,9 +211,15 @@ register struct monst *mtmp;
 	    if ((offer = bribe(mtmp)) >= demand) {
 		pline("%s vanishes, laughing about cowardly mortals.",
 		      Amonnam(mtmp));
+                #ifdef LIVELOG
+                livelog_printf("bribed %s with %ld %s for safe passage", Amonnam(mtmp), offer, currency(demand));
+                #endif
 	    } else if (offer > 0L && (long)rnd(40) > (demand - offer)) {
 		pline("%s scowls at you menacingly, then vanishes.",
 		      Amonnam(mtmp));
+                #ifdef LIVELOG
+                livelog_printf("bribed %s with %ld %s for safe passage", Amonnam(mtmp), offer, currency(demand));
+                #endif
 	    } else {
 		pline("%s gets angry...", Amonnam(mtmp));
 		mtmp->mpeaceful = 0;

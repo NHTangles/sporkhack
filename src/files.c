@@ -2,6 +2,8 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#define NEED_VARARGS /* Uses ... */     /* comment line for pre-compiled headers */
+
 #include "hack.h"
 #include "dlb.h"
 
@@ -1978,6 +1980,8 @@ char		*tmp_levels;
 		else if (!strcasecmp("noshow", msgtype)) typ = MSGTYP_NOSHOW;
 		else if (!strcasecmp("more", msgtype)) typ = MSGTYP_STOP;
 		else if (!strcasecmp("stop", msgtype)) typ = MSGTYP_STOP;
+                /* 'alert' will fallback to 'stop' behaviour if windowport does not support it */
+		else if (!strcasecmp("alert", msgtype)) typ = MSGTYP_ALERT;
 		if (typ != MSGTYP_NORMAL) {
 		    msgpline_add(typ, pattern);
 		}
@@ -2628,5 +2632,62 @@ int ifd, ofd;
 
 /* ----------  END INTERNAL RECOVER ----------- */
 #endif /*SELF_RECOVER*/
+
+#ifdef LIVELOG
+/* Locks the live log file and writes 'buffer' */
+void
+livelog_write_string(buffer)
+     char *buffer;
+{
+    FILE* livelogfile;
+    if(lock_file(LIVELOGFILE, SCOREPREFIX, 10)) {
+       if(!(livelogfile = fopen_datafile(LIVELOGFILE, "a", SCOREPREFIX))) {
+           pline("Cannot open live log file!");
+       } else {
+           char tmpbuf[1024+1];
+           char msgbuf[512+1];
+           char *c1 = msgbuf;
+           strncpy(msgbuf, buffer, 512);
+           msgbuf[512] = '\0';
+           while (*c1 != '\0') {
+             if (*c1 == ':') *c1 = '_';
+             c1++;
+           }
+           snprintf(tmpbuf, 1024, "player=%s:role=%s:race=%s:gender=%s:align=%s:turns=%ld:starttime=%ld:curtime=%ld:message=%s\n",
+                    plname,
+                    urole.filecode,
+                    urace.filecode,
+                    genders[flags.female].filecode,
+                    aligns[1-u.ualign.type].filecode,
+                    moves, (long)u.ubirthday, (long)time(NULL), msgbuf);
+            fprintf(livelogfile, "%s", tmpbuf);
+           (void) fclose(livelogfile);
+       }
+       unlock_file(LIVELOGFILE);
+    }
+}
+
+void
+livelog_printf VA_DECL(const char *, fmt)
+    char ll_msgbuf[512];
+    VA_START(fmt);
+    VA_INIT(fmt, char *);
+    vsnprintf(ll_msgbuf, 512, fmt, VA_ARGS);
+    livelog_write_string(ll_msgbuf);
+    VA_END();
+}
+
+void
+livelog_conduct VA_DECL(const char *, fmt)
+    if ( moves > LL_CONDUCT_THRESHOLD ) {
+        char ll_msgbuf[512];
+        VA_START(fmt);
+        VA_INIT(fmt, char *);
+        vsnprintf(ll_msgbuf, 512, fmt, VA_ARGS);
+        livelog_write_string(ll_msgbuf);
+        VA_END();
+    }
+}
+#endif
 
 /*files.c*/

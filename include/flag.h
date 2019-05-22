@@ -321,6 +321,8 @@ struct instance_flags {
   boolean  autoopen;     /* open doors by walking into them */
 #endif
     boolean  dark_room;	/* show shadows in lit rooms */
+    boolean msg_is_alert; /* suggest windowport should grab player's attention
+                           * and request <TAB> acknowlegement */
 };
 
 /*

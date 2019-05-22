@@ -588,6 +588,7 @@ E void FDECL(do_containerconts, (struct obj *,BOOLEAN_P,BOOLEAN_P,BOOLEAN_P,BOOL
 #endif
 E void FDECL(terminate, (int));
 E int NDECL(num_genocides);
+E void NDECL(mk_dgl_extrainfo);
 
 /* ### engrave.c ### */
 
@@ -701,6 +702,11 @@ E void NDECL(delete_whereis);
 #ifdef WISH_TRACKER
 E void FDECL(trackwish,(char *));
 E void FDECL(makeannounce,(char *));
+#endif
+#ifdef LIVELOG
+E void FDECL(livelog_write_string, (char *));
+E void VDECL(livelog_printf, (const char *,...)) PRINTF_F(1,2);
+E void VDECL(livelog_conduct, (const char *,...)) PRINTF_F(1,2);
 #endif
 
 /* ### fountain.c ### */
@@ -2098,7 +2104,7 @@ E void NDECL(float_up);
 E void FDECL(fill_pit, (int,int));
 E int FDECL(float_down, (long, long));
 E int FDECL(fire_damage, (struct obj *,BOOLEAN_P,BOOLEAN_P,XCHAR_P,XCHAR_P));
-E void FDECL(water_damage, (struct obj *,BOOLEAN_P,BOOLEAN_P));
+E boolean FDECL(water_damage, (struct obj *,BOOLEAN_P,BOOLEAN_P));
 E boolean NDECL(drown);
 E void FDECL(drain_en, (int));
 E int NDECL(dountrap);
@@ -2456,7 +2462,7 @@ E const char *FDECL(exclam, (int force));
 E void FDECL(hit, (const char *,struct monst *,const char *));
 E void FDECL(miss, (const char *,struct monst *));
 E struct monst *FDECL(bhit, (int,int,int,int,int (*)(MONST_P,OBJ_P),
-			     int (*)(OBJ_P,OBJ_P),struct obj *));
+			     int (*)(OBJ_P,OBJ_P),struct obj *, boolean *));
 E struct monst *FDECL(boomhit, (int,int,int));
 E int FDECL(burn_floor_paper, (int,int,BOOLEAN_P,BOOLEAN_P));
 E void FDECL(buzz, (int,int,XCHAR_P,XCHAR_P,int,int));

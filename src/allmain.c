@@ -16,6 +16,8 @@ STATIC_DCL void NDECL(do_positionbar);
 
 #ifdef OVL0
 
+static long prev_dgl_extrainfo = 0;
+
 void
 moveloop()
 {
@@ -198,6 +200,11 @@ moveloop()
 		    if(flags.time && !flags.run)
 			flags.botl = 1;
 
+                    if ((prev_dgl_extrainfo == 0) || (prev_dgl_extrainfo < (moves + 250))) {
+                        prev_dgl_extrainfo = moves;
+                        mk_dgl_extrainfo();
+                    }
+
 		    /* One possible result of prayer is healing.  Whether or
 		     * not you get healed depends on your current hit points.
 		     * If you are allowed to regenerate during the prayer, the
@@ -360,22 +367,6 @@ moveloop()
 
 		 /* move this here so player can check inventory safely in lava
 		  * but any actual action will cause time to pass */
-		if (u.utrap && u.utraptype == TT_LAVA) {
-			if(!is_lava(u.ux,u.uy))
-				u.utrap = 0;
-			else if (!u.uinvulnerable) {
-				u.utrap -= 1<<8;
-				if (u.utrap < 1<<8) {
-					killer_format = KILLED_BY;
-					killer = "molten lava";
-					You("sink below the surface and die.");
-					done(DISSOLVED);
-				} else if(didmove && !u.umoved) {
-					Norep("You sink deeper into the lava.");
-					u.utrap += rnd(4);
-				}
-			}
-		}
 
 	} /* actual time passed */
 
@@ -447,6 +438,23 @@ moveloop()
 	    !In_endgame(&u.uz) && !BClairvoyant &&
 	    !(moves % 15) && !rn2(2))
 		do_vicinity_map();
+
+                if (u.utrap && u.utraptype == TT_LAVA) {
+                        if(!is_lava(u.ux,u.uy))
+                                u.utrap = 0;
+                        else if (!u.uinvulnerable) {
+                                u.utrap -= 1<<8;
+                                if (u.utrap < 1<<8) {
+                                        killer_format = KILLED_BY;
+                                        killer = "molten lava";
+                                        You("sink below the surface and die.");
+                                        done(DISSOLVED);
+                                } else if(didmove && !u.umoved) {
+                                        Norep("You sink deeper into the lava.");
+                                        u.utrap += rnd(4);
+                                }
+                        }
+                }
 
 #ifdef WIZARD
 	if (iflags.sanity_check)

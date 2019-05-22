@@ -149,10 +149,10 @@ LFLAGS = -L/usr/X11R6/lib
 GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
 
 # flags for debugging:
-CFLAGS = -g -I../include
+CFLAGS = -g -O -I../include
 
 #CFLAGS = -O -I../include
-#LFLAGS = 
+#LFLAGS =
 
 # The Qt and Be window systems are written in C++, while the rest of
 # NetHack is standard C.  If using Qt, uncomment the LINK line here to get
@@ -260,7 +260,7 @@ WINGNOMELIB = -lgnomeui -lgnome -lart_lgpl -lgtk -lgdk -lpopt
 # libraries for Gem port
 WINGEMLIB = -le_gem -lgem
 #
-# libraries for BeOS 
+# libraries for BeOS
 WINBELIB = -lbe
 
 WINLIB = $(WINTTYLIB)
