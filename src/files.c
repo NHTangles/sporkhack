@@ -2688,6 +2688,13 @@ livelog_conduct VA_DECL(const char *, fmt)
         VA_END();
     }
 }
+#else 
+void
+livelog_write_string() {}
+void
+livelog_printf() {}
+void
+livelog_conduct() {}
 #endif
 
 /*files.c*/
