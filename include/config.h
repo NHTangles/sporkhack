@@ -144,10 +144,10 @@
 
 #ifndef WIZARD		/* allow for compile-time or Makefile changes */
 # ifndef KR1ED
-#  define WIZARD  "derek" /* the person allowed to use the -D option */
+#  define WIZARD  "build" /* the person allowed to use the -D option */
 # else
 #  define WIZARD
-#  define WIZARD_NAME "derek"
+#  define WIZARD_NAME "build"
 # endif
 #endif
 
@@ -155,7 +155,7 @@
 #define XLOGFILE "xlogfile" /* even larger logfile */
 #define NEWS "news"		/* the file containing the latest hack news */
 #define PANICLOG "paniclog"	/* log of panic and impossible events */
-#define DUMP_LOG				 /* turn on dumping */
+/* #define DUMP_LOG */				 /* turn on dumping */
 #define DUMP_FN "/tmp/sporkhack.%n.%t.txt"
 
 /*#define SERVER_ADMIN_MSG "admin_msg"*/
@@ -178,7 +178,7 @@
 /* #define COMPRESS "/usr/bin/compress"	 Lempel-Ziv compression */
 /* #define COMPRESS_EXTENSION ".Z"	 compress's extension */
 /* An example of one alternative you might want to use: */
-#define COMPRESS "/usr/bin/gzip" /* FSF gzip compression */
+#define COMPRESS "/bin/gzip" /* FSF gzip compression */
 #define COMPRESS_EXTENSION ".gz" 	/* normal gzip extension */
 #endif
 
@@ -191,7 +191,7 @@
  *	a tar-like file, thus making a neater installation.  See *conf.h
  *	for detailed configuration.
  */
-//#define DLB /* not supported on all platforms */
+#define DLB /* not supported on all platforms */
 
 /*
  *	Defining INSURANCE slows down level changes, but allows games that
@@ -210,7 +210,7 @@
  * otherwise it will be the current directory.
  */
 # ifndef HACKDIR
-#  define HACKDIR "/opt/games/sporkhack/"
+#  define HACKDIR "/opt/games/lib/sporkhackdir/"
 # endif
 
 /*
@@ -220,7 +220,7 @@
  * since the user might create files in a directory of his choice.
  * Of course SECURE is meaningful only if HACKDIR is defined.
  */
-#define SECURE 	/* do setuid(getuid()) after chdir() */
+/* #define SECURE */ 	/* do setuid(getuid()) after chdir() */
 
 /*
  * If it is desirable to limit the number of people that can play Hack
@@ -381,6 +381,7 @@ typedef long glyph_t;
 #if defined(TTY_GRAPHICS) || defined(MSWIN_GRAPHICS)
 # define MENU_COLOR
 # define MENU_COLOR_REGEX
+# define MENU_COLOR_REGEX_POSIX
 /* if MENU_COLOR_REGEX is defined, use regular expressions (regex.h,
  * GNU specific functions by default, POSIX functions with
  * MENU_COLOR_REGEX_POSIX).
@@ -408,7 +409,7 @@ typedef long glyph_t;
 /* #define LIVELOGFILE "livelog" */  /* file to output to */
 
 /* no earlygame livelog spam for broken  conducts */
-#define LL_CONDUCT_THRESHOLD 3000 /* min turncount */
+/* #define LL_CONDUCT_THRESHOLD 3000 */ /* min turncount */
 
 #define AUTO_OPEN	/* open doors by walking into them - Stefano Busti */
 
