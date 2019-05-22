@@ -22,7 +22,7 @@ GAMEGRP  = games
 
 # Permissions - some places use setgid instead of setuid, for instance
 # See also the option "SECURE" in include/config.h
-GAMEPERM = 0755
+GAMEPERM = 4755
 FILEPERM = 0644
 EXEPERM  = 0755
 DIRPERM  = 0755
