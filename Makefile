@@ -22,7 +22,7 @@ GAMEGRP  = games
 
 # Permissions - some places use setgid instead of setuid, for instance
 # See also the option "SECURE" in include/config.h
-GAMEPERM = 04755
+GAMEPERM = 0755
 FILEPERM = 0644
 EXEPERM  = 0755
 DIRPERM  = 0755
@@ -36,7 +36,7 @@ DIRPERM  = 0755
 # (if there is, you'll have to do the installation by hand or modify the
 # instructions)
 GAMEDIR  = $(PREFIX)/games/lib/$(GAME)dir
-VARDIR  = $(GAMEDIR)
+VARDIR  = $(GAMEDIR)/var
 SHELLDIR = $(PREFIX)/games
 
 # per discussion in Install.X11 and Install.Qt
