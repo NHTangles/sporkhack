@@ -149,7 +149,7 @@ LFLAGS = -L/usr/X11R6/lib
 GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
 
 # flags for debugging:
-CFLAGS = -g -O -I../include
+CFLAGS = -g -I../include
 
 #CFLAGS = -O -I../include
 #LFLAGS =
